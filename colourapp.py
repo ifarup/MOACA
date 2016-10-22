@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
+import cluster # to be made by group 2
 import sys
+import numpy as np
+import matplotlib.pyplot as plt
 import PyQt4.QtGui as qt
 import PyQt4.QtCore as qtcore
 
@@ -48,13 +51,28 @@ class AppForm(qt.QMainWindow):
             self.file_menu, (load_image_action, None, quit_action))
 
     def create_main_frame(self):
-        self.main_frame = qt.QWidget()
+        self.main_frame = qt.QLabel()
+        self.load_image('images/map.png')
+        self.setCentralWidget(self.main_frame)
+
+    def display_image(self):
+        image = qt.QImage((self.image * 255).astype('uint8').flatten(),
+                          np.shape(self.image)[1],
+                          np.shape(self.image)[0],
+                          qt.QImage.Format_RGB888)
+        pixmap = qt.QPixmap.fromImage(image)
+        self.main_frame.setPixmap(pixmap)
+
+    def load_image(self, filename):
+        self.image = plt.imread(filename)[..., :3] # remove possible alpha channel
+        self.display_image()
 
     def on_close(self):
         self.close()
 
     def on_load_image(self):
-        return
+        self.load_image(qt.QFileDialog.getOpenFileName(self, 'Open image',
+                                                       filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
 
 
 def main():
