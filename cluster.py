@@ -2,7 +2,7 @@
 
 # Module for performing clustering, classification etc. for the ColourApp
 from scipy import misc
-from scipy.cluster.vq import kmeans, kmeans2, whiten
+from scipy.cluster.vq import kmeans2, whiten
 import numpy as np
 
 # Takes a ndarray and a k value as paramter.
@@ -17,19 +17,33 @@ def cluster(im, k=0):
     dimensions = im.shape
     picReshape = im.reshape((dimensions[0]*dimensions[1], dimensions[2]))
 
-    # Kmeans dos not support datatypes other than Float or Double, and for
-    # this reason it must be changed. Nobody likes errors :)
-    pictureArr = picReshape.astype(float)
+    # The image is Int which Kmeans does not support (only Float and Double), and for
+    # this reason it must be changed.
+    pictureMatrix = picReshape.astype(float)
 
-    # For future develompent implement whiten for better clustering.
-    # whitened = whiten(pictureArr)
+    # Used for better results of the clustering.
+    whitened = whiten(pictureMatrix)
 
-    # Kmeans clustering
-    kArr, label = kmeans2(pictureArr, k)
+    # Calculates the standard deviation. Used for the inverse whiten operation on the
+    # centroid array returned by kmeans2. This is needed to calculate the inverse operation
+    # of whiten. Whiten basically returns pictureMatrix devided by its standard deviation.
+    # https://github.com/scipy/scipy/blob/master/scipy/cluster/vq.py
+    stdDev = np.std(pictureMatrix, axis=0)
+    zeroStdMask = stdDev == 0
+    if zeroStdMask.any():
+        # For each value having a standard deviation of zero.
+        stdDev[zeroStdMask] = 1.0
+
+    # Kmeans clustering on whiten data.
+    kArr, label = kmeans2(whitened, k)
 
     # Reshapes the label list back to the size of the origial image matrix
     centroidMatrix = label.reshape((dimensions[0], dimensions[1]))
 
-    return centroidMatrix,kArr
+    # kArr*stdDev might result i negative numbers in the matrix, don't know if good or not,
+    # probably not.
+    # NOTE: find a solution...
+    return centroidMatrix, (kArr * stdDev)
 
-cluster(misc.face(), 4)
+#cluster(misc.face(), 4)
+#cluster(misc.imread("images/asdfghjk.png"), 4)
