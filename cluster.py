@@ -39,14 +39,14 @@ k=0
 for i in range(dimensions[0]):
     for j in range(dimensions[1]):
         pictureArr[workaround] = [face[i][j][k], face[i][j][k+1], face[i][j][k+2]]
-        workaround+=1
+        workaround += 1
 
 
 # Does magic with the picture and returns cluster centers based on the wanted K.
     # Whiten is beneficial, why?
 whitened = whiten(pictureArr)
 kVal = 3
-arr,lab = kmeans2(whitened, kVal)
+arr, lab = kmeans2(whitened, kVal)
 print(arr)
 for i in range(10):
     print(lab[i])
