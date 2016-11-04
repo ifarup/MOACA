@@ -5,6 +5,7 @@ from scipy import misc
 from scipy.cluster.vq import kmeans2, whiten
 import numpy as np
 
+# Takes a ndarray and a k value as paramter.
 def cluster(im, k=0):
     # Reads a image from a directory or use the generic "face"
     # face = misc.face()
@@ -38,4 +39,4 @@ def cluster(im, k=0):
 
     return centroidPicArr,kArr
 
-cluster(misc.imread("images/asdfghjk.png"), 3)
+#cluster(misc.imread("images/asdfghjk.png"), 3)
