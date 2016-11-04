@@ -101,7 +101,11 @@ class AppForm(qt.QMainWindow):
         self.load_image(qt.QFileDialog.getOpenFileName(self, 'Open image',
                                                        filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
 
-
+    # Creates the needed legend, one element for each value av the k-array
+    def create_legend(self):
+        for k_element in self.k_elements:
+            self.legend.add(k_element)
+            
 
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_value_changed(self):
