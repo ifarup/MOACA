@@ -2,16 +2,20 @@
 
 # Module for performing clustering, classification etc. for the ColourApp
 from scipy import misc
-from scipy.cluster.vq import vq, kmeans, whiten
+from scipy.cluster.vq import vq, kmeans, kmeans2, whiten
 import matplotlib.pyplot as plt
 import numpy as np
 
 #f = misc.face()  # retrieve a grayscale image
 #plt.imshow(f)
 #plt.show()
+from scipy.constants.constants import carat
 
+# Reads a image from a directory
+#face = misc.face()
+face = misc.imread("/home/hola/Downloads/asdfghjk.png")
+#print(face.shape)
 
-face = misc.face()
 #misc.imsave('face.png', face) # First we need to create the PNG file
 #face = misc.imread('face.png')
 
@@ -28,6 +32,7 @@ face = misc.face()
 dimensions = face.shape
 pictureArr = np.zeros(shape=(dimensions[0]*dimensions[1], dimensions[2]))
 
+
 # Iterates over the picture and stores the values in the numpy array.
 workaround = 0
 k=0
@@ -36,12 +41,15 @@ for i in range(dimensions[0]):
         pictureArr[workaround] = [face[i][j][k], face[i][j][k+1], face[i][j][k+2]]
         workaround+=1
 
+
 # Does magic with the picture and returns cluster centers based on the wanted K.
-    # Whiten is beneficial, why? 
+    # Whiten is beneficial, why?
 whitened = whiten(pictureArr)
-kVal = 4
-magic = kmeans(whitened, kVal)
-print(magic)
+kVal = 3
+arr,lab = kmeans2(whitened, kVal)
+print(arr)
+for i in range(10):
+    print(lab[i])
 
 
 
