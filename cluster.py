@@ -2,26 +2,24 @@
 
 # Module for performing clustering, classification etc. for the ColourApp
 from scipy import misc
-from scipy.cluster.vq import kmeans2, whiten
+from scipy.cluster.vq import kmeans, kmeans2, whiten
 import numpy as np
 
 # Takes a ndarray and a k value as paramter.
 def cluster(im, k=0):
-    # Reads a image from a directory or use the generic "face"
-    # face = misc.face()
-    # face = misc.imread("images/asdfghjk.png")
 
-    # Np array of length*width high and RGB wide, all zero
+    # To show the picture sent to the function to verify that there actually is an image.
+    #import matplotlib.pyplot as plt
+    #plt.imshow(im)
+    #plt.show()
+
+    # Reshapes the image to a RGB * (width*height) matrix.
     dimensions = im.shape
-    pictureArr = np.zeros(shape=(dimensions[0] * dimensions[1], dimensions[2]))
+    picReshape = im.reshape((dimensions[0]*dimensions[1], dimensions[2]))
 
-    # Iterates over the picture and stores the values in the numpy array.
-    workaround = 0
-    dim = [0,1,2]
-    for i in range(dimensions[0]):
-        for j in range(dimensions[1]):
-            pictureArr[workaround] = [im[i][j][dim[0]], im[i][j][dim[1]], im[i][j][dim[2]]]
-            workaround += 1
+    # Kmeans dos not support datatypes other than Float or Double, and for
+    # this reason it must be changed. Nobody likes errors :)
+    pictureArr = picReshape.astype(float)
 
     # For future develompent implement whiten for better clustering.
     # whitened = whiten(pictureArr)
@@ -29,14 +27,9 @@ def cluster(im, k=0):
     # Kmeans clustering
     kArr, label = kmeans2(pictureArr, k)
 
-    # Creates a width*height array reprecenting the image which is filled with corresponding centroid value
-    workaround = 0
-    centroidPicArr = np.zeros(shape=(dimensions[0], dimensions[1]))
-    for i in range(dimensions[0]):
-        for j in range(dimensions[1]):
-            centroidPicArr[i][j] = label[workaround]
-            workaround += 1
+    # Reshapes the label list back to the size of the origial image matrix
+    centroidMatrix = label.reshape((dimensions[0], dimensions[1]))
 
-    return centroidPicArr,kArr
+    return centroidMatrix,kArr
 
-#cluster(misc.imread("images/asdfghjk.png"), 3)
+cluster(misc.face(), 4)
