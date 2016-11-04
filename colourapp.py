@@ -12,8 +12,7 @@ import cluster
 class AppForm(qt.QMainWindow):
     """
     The main application window.
-    """
-    """
+
     Attributes of AppForm:
     image
     menu file_menu
@@ -65,13 +64,17 @@ class AppForm(qt.QMainWindow):
 
         self.image_label = qt.QLabel()
         self.load_image('images/map.png')
-        self.setCentralWidget(self.image_label)
+        layout.addWidget(self.image_label)
 
-        #Utprøving av slider:
-        self.slider = slider.SliderWidget()
-        self.slider.valueChanged.connect(self.on_slider_released())
-        layout.addItem(self.slider)
+        # Utprøving av slider:
+        self.slider = slider.SliderWidget(qtcore.Qt.Horizontal)
+        self.slider.valueChanged.connect(self.on_slider_value_changed)
+        layout.addWidget(self.slider)
 
+        self.main_frame = qt.QWidget()
+        self.main_frame.setLayout(layout)
+
+        self.setCentralWidget(self.main_frame)
         """
         Legge inn resten av widgets
         """
@@ -98,9 +101,9 @@ class AppForm(qt.QMainWindow):
                                                        filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
 
     # Calls the clustering function with loaded image and value of slider:
-    def on_slider_released(self):
+    def on_slider_value_changed(self):
         # imagearray, k = cluser."" clusterfunksjonen_til_noobsa ""(self.image, self.slider.value(self))
-
+        self.slider.value()
 
 
 def main():
