@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# coding=utf-8
 
 import cluster # to be made by group 2
 import sys
@@ -6,7 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PyQt4.QtGui as qt
 import PyQt4.QtCore as qtcore
-import sliderwidget as slider
 import cluster
 
 class AppForm(qt.QMainWindow):
@@ -66,9 +66,9 @@ class AppForm(qt.QMainWindow):
         self.load_image('images/map.png')
         layout.addWidget(self.image_label)
 
-        # Utprøving av slider:
-        self.slider = slider.SliderWidget(qtcore.Qt.Horizontal)
+        self.slider = qt.QSlider(qtcore.Qt.Horizontal)
         self.slider.valueChanged.connect(self.on_slider_value_changed)
+        self.initialize_slider(self.slider)
         layout.addWidget(self.slider)
 
         self.main_frame = qt.QWidget()
@@ -91,6 +91,7 @@ class AppForm(qt.QMainWindow):
 
     def load_image(self, filename):
         self.image = plt.imread(filename)[..., :3] # remove possible alpha channel
+        self.get_cluster()
         self.display_image()
 
     def on_close(self):
@@ -99,15 +100,26 @@ class AppForm(qt.QMainWindow):
     def on_load_image(self):
         self.load_image(qt.QFileDialog.getOpenFileName(self, 'Open image',
                                                        filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
-    def create_legend(slef):
-        for (k_element in self.k_element):
-            self.legend.add(k_element)
-            
+
+
 
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_value_changed(self):
-        # imagearray, k = cluser."" clusterfunksjonen_til_noobsa ""(self.image, self.slider.value(self))
-        self.slider.value()
+        self.get_cluster(self.slider.value())
+
+
+    def get_cluster(self, k=1):
+        self.im_array, self.k_elements = cluster.cluster(self.image, k)
+
+    def initialize_slider(self, slider):
+        minSliderValue = 1
+        maxSliderValue = 20
+        sliderValue = self.k_elements.shape[0]
+
+        slider.setMinimum(minSliderValue)
+        slider.setMaximum(maxSliderValue)
+        slider.setValue(sliderValue)
+        slider.setTickInterval(1)
 
 
 def main():
