@@ -96,8 +96,10 @@ class AppForm(qt.QMainWindow):
     def on_load_image(self):
         self.load_image(qt.QFileDialog.getOpenFileName(self, 'Open image',
                                                        filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
+    
+    # Creates the needed legend, one element for each value av the k-array
     def create_legend(slef):
-        for (k_element in self.k_element):
+        for k_element in self.k:
             self.legend.add(k_element)
             
 
