@@ -9,12 +9,11 @@ import numpy as np
 #f = misc.face()  # retrieve a grayscale image
 #plt.imshow(f)
 #plt.show()
-from scipy.constants.constants import carat
 
-# Reads a image from a directory
+# Reads a image from a directory or use the generic "face"
 #face = misc.face()
-face = misc.imread("/home/hola/Downloads/asdfghjk.png")
-#print(face.shape)
+face = misc.imread("images/asdfghjk.png")
+print(face.shape)
 
 #misc.imsave('face.png', face) # First we need to create the PNG file
 #face = misc.imread('face.png')
@@ -45,7 +44,7 @@ for i in range(dimensions[0]):
 # Does magic with the picture and returns cluster centers based on the wanted K.
     # Whiten is beneficial, why?
 whitened = whiten(pictureArr)
-kVal = 3
+kVal = 4
 arr,lab = kmeans2(whitened, kVal)
 print(arr)
 for i in range(10):

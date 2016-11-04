@@ -6,12 +6,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PyQt4.QtGui as qt
 import PyQt4.QtCore as qtcore
-
+import sliderwidget as slider
+import cluster
 
 class AppForm(qt.QMainWindow):
     """
     The main application window.
     """
+    """
+    Attributes of AppForm:
+    image
+    menu file_menu
+    QAction action
+    QLabel main_frame ( needs to be a container for multiple widgets )
+    """
+
+
     def __init__(self, parent=None):
         qt.QMainWindow.__init__(self, parent)
         self.setWindowTitle('ColourApp')
@@ -51,9 +61,22 @@ class AppForm(qt.QMainWindow):
             self.file_menu, (load_image_action, None, quit_action))
 
     def create_main_frame(self):
-        self.main_frame = qt.QLabel()
+        layout = qt.QVBoxLayout()
+
+        self.image_label = qt.QLabel()
         self.load_image('images/map.png')
-        self.setCentralWidget(self.main_frame)
+        self.setCentralWidget(self.image_label)
+
+        #Utprøving av slider:
+        self.slider = slider.SliderWidget()
+        self.slider.valueChanged.connect(self.on_slider_released())
+        layout.addItem(self.slider)
+
+        """
+        Legge inn resten av widgets
+        """
+
+
 
     def display_image(self):
         image = qt.QImage((self.image * 255).astype('uint8').flatten(),
@@ -61,7 +84,7 @@ class AppForm(qt.QMainWindow):
                           np.shape(self.image)[0],
                           qt.QImage.Format_RGB888)
         pixmap = qt.QPixmap.fromImage(image)
-        self.main_frame.setPixmap(pixmap)
+        self.image_label.setPixmap(pixmap)
 
     def load_image(self, filename):
         self.image = plt.imread(filename)[..., :3] # remove possible alpha channel
@@ -77,6 +100,11 @@ class AppForm(qt.QMainWindow):
         for (k_element in self.k_element):
             self.legend.add(k_element)
             
+
+    # Calls the clustering function with loaded image and value of slider:
+    def on_slider_released(self):
+        # imagearray, k = cluser."" clusterfunksjonen_til_noobsa ""(self.image, self.slider.value(self))
+
 
 
 def main():
