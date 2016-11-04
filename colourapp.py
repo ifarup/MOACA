@@ -67,7 +67,7 @@ class AppForm(qt.QMainWindow):
         layout.addWidget(self.image_label)
 
         self.slider = qt.QSlider(qtcore.Qt.Horizontal)
-        self.slider.valueChanged.connect(self.on_slider_value_changed)
+        self.slider.sliderReleased.connect(self.on_slider_released)
         self.initialize_slider(self.slider)
         layout.addWidget(self.slider)
 
@@ -108,7 +108,7 @@ class AppForm(qt.QMainWindow):
             
 
     # Calls the clustering function with loaded image and value of slider:
-    def on_slider_value_changed(self):
+    def on_slider_released(self):
         self.get_cluster(self.slider.value())
 
 
