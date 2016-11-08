@@ -7,36 +7,43 @@ import numpy as np
 
 # Takes a ndarray and a k value as paramter.
 def cluster(im, k=0):
-    # Reads a image from a directory or use the generic "face"
-    # face = misc.face()
-    # face = misc.imread("images/asdfghjk.png")
 
-    # Np array of length*width high and RGB wide, all zero
+    # To show the picture sent to the function to verify that there actually is an image.
+    #import matplotlib.pyplot as plt
+    #plt.imshow(im)
+    #plt.show()
+
+    # Reshapes the image to a RGB * (width*height) matrix.
     dimensions = im.shape
-    pictureArr = np.zeros(shape=(dimensions[0] * dimensions[1], dimensions[2]))
+    picReshape = im.reshape((dimensions[0]*dimensions[1], dimensions[2]))
 
-    # Iterates over the picture and stores the values in the numpy array.
-    workaround = 0
-    dim = [0,1,2]
-    for i in range(dimensions[0]):
-        for j in range(dimensions[1]):
-            pictureArr[workaround] = [im[i][j][dim[0]], im[i][j][dim[1]], im[i][j][dim[2]]]
-            workaround += 1
+    # The image is Int which Kmeans does not support (only Float and Double), and for
+    # this reason it must be changed.
+    pictureMatrix = picReshape.astype(float)
 
-    # For future develompent implement whiten for better clustering.
-    # whitened = whiten(pictureArr)
+    # Used for better results of the clustering.
+    whitened = whiten(pictureMatrix)
 
-    # Kmeans clustering
-    kArr, label = kmeans2(pictureArr, k)
+    # Calculates the standard deviation. Used for the inverse whiten operation on the
+    # centroid array returned by kmeans2. This is needed to calculate the inverse operation
+    # of whiten. Whiten basically returns pictureMatrix devided by its standard deviation.
+    # https://github.com/scipy/scipy/blob/master/scipy/cluster/vq.py
+    stdDev = np.std(pictureMatrix, axis=0)
+    zeroStdMask = stdDev == 0
+    if zeroStdMask.any():
+        # For each value having a standard deviation of zero.
+        stdDev[zeroStdMask] = 1.0
 
-    # Creates a width*height array reprecenting the image which is filled with corresponding centroid value
-    workaround = 0
-    centroidPicArr = np.zeros(shape=(dimensions[0], dimensions[1]))
-    for i in range(dimensions[0]):
-        for j in range(dimensions[1]):
-            centroidPicArr[i][j] = label[workaround]
-            workaround += 1
+    # Kmeans clustering on whiten data.
+    kArr, label = kmeans2(whitened, k)
 
-    return centroidPicArr,kArr
+    # Reshapes the label list back to the size of the origial image matrix
+    centroidMatrix = label.reshape((dimensions[0], dimensions[1]))
 
-#cluster(misc.imread("images/asdfghjk.png"), 3)
+    # kArr*stdDev might result i negative numbers in the matrix, don't know if good or not,
+    # probably not.
+    # NOTE: find a solution...
+    return centroidMatrix, (kArr * stdDev)
+
+#cluster(misc.face(), 4)
+#cluster(misc.imread("images/asdfghjk.png"), 4)
