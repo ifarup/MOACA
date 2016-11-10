@@ -41,25 +41,31 @@ def cluster(im, k=0):
 
     # Kmeans clustering on whiten data.
     # if k=0 we need to estimate a good K(KK)
+
+        # Kmeans clustering on whiten data.
+        # if k=0 we need to estimate a good K(KK)
     if (k == 0):
-        i = 2;
+        i = 2
         s_scores = np.array(10)
 
         # Hardcode bad siluette scores for k = 0,1 so they are not choosen later
-        #s_scores[0] = -1
-        #s_scores[1] = -1
+        # s_scores[0] = -1
+        # s_scores[1] = -1
 
         while (i < 10):
             kArr, label = kmeans2(whitened, i)
-            s_scores[i] = metrics.silhouette_score(kArr, label-1)
+            s_scores[i] = metrics.silhouette_score(kArr, label)
             print(s_scores[i])
     else:
         kArr, label = kmeans2(whitened, k)
 
     # Reshapes the label list back to the size of the origial image matrix
+    centroidMatrix = label.reshape((dimensions[0], dimensions[1]))
+
     # kArr*stdDev might result i negative numbers in the matrix, don't know if good or not,
     # probably not.
     # NOTE: find a solution...
     return centroidMatrix, (kArr * stdDev)
-cluster(misc.face(), 0)
+
+cluster(misc.face(), 4)
 #cluster(misc.imread("images/asdfghjk.png"), 4)
