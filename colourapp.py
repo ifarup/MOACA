@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# coding=utf-8
 
 import cluster # to be made by group 2
 import sys
@@ -6,12 +7,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PyQt4.QtGui as qt
 import PyQt4.QtCore as qtcore
-
+import cluster
 
 class AppForm(qt.QMainWindow):
     """
     The main application window.
+
+    Attributes of AppForm:
+    image
+    menu file_menu
+    QAction action
+    QLabel main_frame ( needs to be a container for multiple widgets )
     """
+
+
     def __init__(self, parent=None):
         qt.QMainWindow.__init__(self, parent)
         self.setWindowTitle('ColourApp')
@@ -51,9 +60,26 @@ class AppForm(qt.QMainWindow):
             self.file_menu, (load_image_action, None, quit_action))
 
     def create_main_frame(self):
-        self.main_frame = qt.QLabel()
+        layout = qt.QVBoxLayout()
+
+        self.image_label = qt.QLabel()
         self.load_image('images/map.png')
+        layout.addWidget(self.image_label)
+
+        self.slider = qt.QSlider(qtcore.Qt.Horizontal)
+        self.slider.sliderReleased.connect(self.on_slider_released)
+        self.initialize_slider(self.slider)
+        layout.addWidget(self.slider)
+
+        self.main_frame = qt.QWidget()
+        self.main_frame.setLayout(layout)
+
         self.setCentralWidget(self.main_frame)
+        """
+        Legge inn resten av widgets
+        """
+
+
 
     def display_image(self):
         image = qt.QImage((self.image * 255).astype('uint8').flatten(),
@@ -61,10 +87,11 @@ class AppForm(qt.QMainWindow):
                           np.shape(self.image)[0],
                           qt.QImage.Format_RGB888)
         pixmap = qt.QPixmap.fromImage(image)
-        self.main_frame.setPixmap(pixmap)
+        self.image_label.setPixmap(pixmap)
 
     def load_image(self, filename):
         self.image = plt.imread(filename)[..., :3] # remove possible alpha channel
+        self.get_cluster()
         self.display_image()
 
     def on_close(self):
@@ -73,6 +100,32 @@ class AppForm(qt.QMainWindow):
     def on_load_image(self):
         self.load_image(qt.QFileDialog.getOpenFileName(self, 'Open image',
                                                        filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
+
+    # Creates the needed legend, one element for each value av the k-array
+    # Discard this version, Ivar with much easier solution
+#==============================================================================
+#     def create_legend(slef):
+#         for k_element in self.k:
+#             self.legend.add(k_element)
+#==============================================================================
+
+    # Calls the clustering function with loaded image and value of slider:
+    def on_slider_released(self):
+        self.get_cluster(self.slider.value())
+
+
+    def get_cluster(self, k = 3):
+        self.im_array, self.k_elements = cluster.cluster(self.image, k)
+
+    def initialize_slider(self, slider):
+        minSliderValue = 1
+        maxSliderValue = 20
+        sliderValue = self.k_elements.shape[0]
+
+        slider.setMinimum(minSliderValue)
+        slider.setMaximum(maxSliderValue)
+        slider.setValue(sliderValue)
+        slider.setTickInterval(1)
 
 
 def main():
