@@ -9,12 +9,11 @@ import numpy as np
 #f = misc.face()  # retrieve a grayscale image
 #plt.imshow(f)
 #plt.show()
-from scipy.constants.constants import carat
 
-# Reads a image from a directory
+# Reads a image from a directory or use the generic "face"
 #face = misc.face()
-face = misc.imread("/home/hola/Downloads/asdfghjk.png")
-#print(face.shape)
+face = misc.imread("images/asdfghjk.png")
+print(face.shape)
 
 #misc.imsave('face.png', face) # First we need to create the PNG file
 #face = misc.imread('face.png')
@@ -68,4 +67,14 @@ def cluster(im, k=0):
     """
     Return clusters (array of centers) and classified image
     """
+    k = 2
+    dim = im.shape()
+    dimArray = np.array[[dim[0]][dim[1]]]
+    dimArray = np.ones(dimArray.shape())
+    for i in range(dim[0]):
+        for j in range(dim[1]/2):
+            dimArray[i][j] = 0
+
+    palettArr = np.array[k][3]
+    palettArr[0] = {}
     return
