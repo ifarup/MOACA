@@ -3,10 +3,14 @@
 # Module for performing clustering, classification etc. for the ColourApp
 from scipy import misc
 from scipy.cluster.vq import kmeans2, whiten
+from sklearn.cluster import AffinityPropagation
+from sklearn import metrics
 import numpy as np
 
 # Takes a ndarray and a k value as paramter.
+
 def cluster(im, k=0):
+
 
     # To show the picture sent to the function to verify that there actually is an image.
     #import matplotlib.pyplot as plt
@@ -16,6 +20,7 @@ def cluster(im, k=0):
     # Reshapes the image to a RGB * (width*height) matrix.
     dimensions = im.shape
     picReshape = im.reshape((dimensions[0]*dimensions[1], dimensions[2]))
+    numb_of_pxl = dimensions[0]*dimensions[1]
 
     # The image is Int which Kmeans does not support (only Float and Double), and for
     # this reason it must be changed.
@@ -35,15 +40,26 @@ def cluster(im, k=0):
         stdDev[zeroStdMask] = 1.0
 
     # Kmeans clustering on whiten data.
-    kArr, label = kmeans2(whitened, k)
+    # if k=0 we need to estimate a good K(KK)
+    if (k == 0):
+        i = 2;
+        s_scores = np.array(10)
+
+        # Hardcode bad siluette scores for k = 0,1 so they are not choosen later
+        #s_scores[0] = -1
+        #s_scores[1] = -1
+
+        while (i < 10):
+            kArr, label = kmeans2(whitened, i)
+            s_scores[i] = metrics.silhouette_score(kArr, label-1)
+            print(s_scores[i])
+    else:
+        kArr, label = kmeans2(whitened, k)
 
     # Reshapes the label list back to the size of the origial image matrix
-    centroidMatrix = label.reshape((dimensions[0], dimensions[1]))
-
     # kArr*stdDev might result i negative numbers in the matrix, don't know if good or not,
     # probably not.
     # NOTE: find a solution...
     return centroidMatrix, (kArr * stdDev)
-
-#cluster(misc.face(), 4)
+cluster(misc.face(), 0)
 #cluster(misc.imread("images/asdfghjk.png"), 4)
