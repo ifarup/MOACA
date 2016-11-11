@@ -62,7 +62,9 @@ def cluster(im, k=0):
     #finds the best K(closes to 1)
     k_val = np.amax(s_scores)
     k = np.argmax(s_scores)
-    print(k, k_val)
+    print(19 * '*')
+    print('|',k, k_val,'|')
+    print(19 * '*')
     # Reshapes the label list back to the size of the origial image matrix
     centroidMatrix = label.reshape((dimensions[0], dimensions[1]))
 
