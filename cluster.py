@@ -80,5 +80,6 @@ def cluster(im, k=0):
     # Returns a centroidmatrix representing the image with clustervalues instead of actual colors.
     return centroidMatrix, kArr
 
+#cluster(misc.face(), 0)
 #cluster(misc.face(), 4)
 #cluster(misc.imread("images/asdfghjk.jpg"), 4)

@@ -91,6 +91,8 @@ class AppForm(qt.QMainWindow):
 
     def load_image(self, filename):
         self.image = plt.imread(filename)[..., :3] # remove possible alpha channel
+        if self.image.dtype == 'uint8':
+            self.image = self.image.astype('float') / 255
         self.get_cluster()
         self.display_image()
 
