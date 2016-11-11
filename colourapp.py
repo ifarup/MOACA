@@ -111,7 +111,6 @@ class AppForm(qt.QMainWindow):
     def on_slider_released(self):
         self.get_cluster(self.slider.value())
 
-
     def get_cluster(self, k = 3):
         self.im_array, self.k_elements = cluster.cluster(self.image, k)
         self.create_legend(k) # Just a thought on how this could work
