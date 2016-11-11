@@ -2,12 +2,20 @@
 
 # Module for performing clustering, classification etc. for the ColourApp
 from scipy import misc
+<<<<<<< HEAD
 #from scipy.cluster.vq import kmeans2, whiten
 from sklearn import cluster as clstr
+=======
+from scipy.cluster.vq import kmeans2, whiten
+from sklearn.cluster import AffinityPropagation
+from sklearn import metrics
+>>>>>>> dc0ca211a0aa9b62c7f824997e2ac863ef356d91
 import numpy as np
 
 # Takes a ndarray and a k value as paramter.
+
 def cluster(im, k=0):
+
 
     # To show the picture sent to the function to verify that there actually is an image.
     #import matplotlib.pyplot as plt
@@ -17,6 +25,7 @@ def cluster(im, k=0):
     # Reshapes the image to a RGB * (width*height) matrix.
     dimensions = im.shape
     picReshape = im.reshape((dimensions[0]*dimensions[1], dimensions[2]))
+    numb_of_pxl = dimensions[0]*dimensions[1]
 
     # The image is Int which Kmeans does not support (only Float and Double), and for
     # this reason it must be changed.
@@ -37,7 +46,29 @@ def cluster(im, k=0):
 
     # Kmeans clustering on whiten data.
 #    kArr, label = kmeans2(whitened, k)
+    # if k=0 we need to estimate a good K(KK)
 
+        # Kmeans clustering on whiten data.
+        # if k=0 we need to estimate a good K(KK)
+    if (k == 0):
+
+        s_scores = np.ones(10)
+        s_scores[0] = -1
+        s_scores[1] = -1
+        for i in range(2, 10):
+            #WHITEND 3(N*M) originale datapunkter
+            #n_samples, number of centroids
+            #label, 3xK matrise
+            kArr, label = kmeans2(whitened, i)
+            s_scores[i] = metrics.silhouette_score(whitened, label)
+            print(i, s_scores[i])
+    else:
+        kArr, label = kmeans2(whitened, k)
+
+    #finds the best K(closes to 1)
+    k_val = np.amax(s_scores)
+    k = np.argmax(s_scores)
+    print(k, k_val)
     # Reshapes the label list back to the size of the origial image matrix
 #    centroidMatrix = label.reshape((dimensions[0], dimensions[1]))
 
@@ -53,5 +84,5 @@ def cluster(im, k=0):
 #    return centroidMatrix, (kArr * stdDev)
     return kmeansData
 
-#cluster(misc.face(), 4)
-#cluster(misc.imread("images/asdfghjk.png"), 4)
+#cluster(misc.face(), 0)
+cluster(misc.imread("images/asdfghjk.png"), 0)

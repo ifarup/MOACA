@@ -108,8 +108,6 @@ class AppForm(qt.QMainWindow):
 #         for k_element in self.k:
 #             self.legend.add(k_element)
 #==============================================================================
-=======
-            
 
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
