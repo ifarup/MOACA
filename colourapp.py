@@ -23,6 +23,10 @@ class AppForm(qt.QMainWindow):
 
     def __init__(self, parent=None):
         qt.QMainWindow.__init__(self, parent)
+
+        self.minKValue = 2
+        self.maxKValue = 30
+
         self.setWindowTitle('ColourApp')
         self.create_menu()
         self.create_main_frame()
@@ -60,16 +64,21 @@ class AppForm(qt.QMainWindow):
             self.file_menu, (load_image_action, None, quit_action))
 
     def create_main_frame(self):
-        layout = qt.QVBoxLayout()
+        layout = qt.QGridLayout()
 
         self.image_label = qt.QLabel()
         self.load_image('images/map.png')
-        layout.addWidget(self.image_label)
+        layout.addWidget(self.image_label, 0, 0, 2, 2)
 
         self.slider = qt.QSlider(qtcore.Qt.Horizontal)
         self.slider.sliderReleased.connect(self.on_slider_released)
         self.initialize_slider(self.slider)
-        layout.addWidget(self.slider)
+        layout.addWidget(self.slider, 2, 0)
+
+        self.spin_box = qt.QSpinBox()
+        self.spin_box.valueChanged.connect(self.on_spin_box_changed)
+        self.initialize_spin_box()
+        layout.addWidget(self.spin_box, 2, 1)
 
         self.main_frame = qt.QWidget()
         self.main_frame.setLayout(layout)
@@ -111,22 +120,32 @@ class AppForm(qt.QMainWindow):
 
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
+        self.spin_box.setValue(self.slider.value())
         self.get_cluster(self.slider.value())
 
-
+    def on_spin_box_changed(self):
+        self.slider.setValue(self.spin_box.value())
+        self.get_cluster(self.spin_box.value())
 
     def get_cluster(self, k = 3):
         self.im_array, self.k_elements = cluster.cluster(self.image, k)
 
     def initialize_slider(self, slider):
-        minSliderValue = 1
-        maxSliderValue = 20
-        sliderValue = self.k_elements.shape[0]
+        k_value = self.k_elements.shape[0]
 
-        slider.setMinimum(minSliderValue)
-        slider.setMaximum(maxSliderValue)
-        slider.setValue(sliderValue)
+        slider.setMinimum(self.minKValue)
+        slider.setMaximum(self.maxKValue)
         slider.setTickInterval(1)
+        slider.setValue(k_value)
+        slider.setPageStep(1)
+
+
+    def initialize_spin_box(self):
+        self.spin_box.setMinimum(self.minKValue)
+        self.spin_box.setMaximum(self.maxKValue)
+        self.spin_box.setSingleStep(1)
+        self.spin_box.setValue(self.slider.value())
+
 
 
 def main():
