@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PyQt4.QtGui as qt
 import PyQt4.QtCore as qtcore
-import cluster
+from scipy import misc
 
 class AppForm(qt.QMainWindow):
     """
@@ -102,12 +102,10 @@ class AppForm(qt.QMainWindow):
                                                        filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
 
     # Creates the needed legend, one element for each value av the k-array
-    # Discard this version, Ivar with much easier solution
-#==============================================================================
-#     def create_legend(slef):
-#         for k_element in self.k:
-#             self.legend.add(k_element)
-#==============================================================================
+    def create_legend(self, k):
+        kReS = self.k_elements.reshape(k, 1, 3)
+        kReS = misc.imresize(kReS, (100, 100), interp='nearest')
+        # Now we got the images, what to do later on?         
 
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
@@ -116,6 +114,7 @@ class AppForm(qt.QMainWindow):
 
     def get_cluster(self, k = 3):
         self.im_array, self.k_elements = cluster.cluster(self.image, k)
+        self.create_legend(k) # Just a thought on how this could work
 
     def initialize_slider(self, slider):
         minSliderValue = 1
