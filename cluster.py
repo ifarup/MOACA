@@ -57,11 +57,11 @@ def cluster(im, k=0):
             #n_samples, number of centroids
             #label, 3xK matrise
 
-            kArr, label = kmeans2(im, i)
-            s_scores[i] = metrics.silhouette_score(im, label)
-            print(i, s_scores[i])
-    else:
-        kArr, label = kmeans2(whitened, k)
+#            kArr, label = kmeans2(im, i)
+#            s_scores[i] = metrics.silhouette_score(im, label)
+#            print(i, s_scores[i])
+#    else:
+#        kArr, label = kmeans2(whitened, k)
 
     #finds the best K(closes to 1)
 #    k_val = np.amax(s_scores)
