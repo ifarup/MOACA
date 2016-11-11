@@ -31,7 +31,7 @@ def cluster(im, k, intervall = False):
     whitened = whiten(pictureMatrix)
 
     # Calculates the standard deviation. Used for the inverse whiten operation on the
-    # centroid array returned by kmeans2. This is needed to calculate the inverse operation
+    # centroid array returned by kmeans. This is needed to calculate the inverse operation
     # of whiten. Whiten basically returns pictureMatrix devided by its standard deviation.
     # https://github.com/scipy/scipy/blob/master/scipy/cluster/vq.py
     stdDev = np.std(pictureMatrix, axis=0)
@@ -70,13 +70,16 @@ def cluster(im, k, intervall = False):
 
     # Reshapes the label list back to the size of the origial image matrix
 
+    # Clusters the images whiten data and recreates the actual centroid values.
     kArr = (kmeansData.cluster_centers_ * stdDev)
+
+    # Reshapes the label list back to the size of the origial image matrix,
     centroidMatrix = np.array(kmeansData.labels_).reshape((dimensions[0], dimensions[1]))
 
-    # kArr*stdDev might result i negative numbers in the matrix, don't know if good or not,
-    # probably not.
-    # NOTE: find a solution...
-    return centroidMatrix, (kArr)
+    # Returns a centroidmatrix representing the image with clustervalues instead of actual colors.
+    return centroidMatrix, kArr
 
 #cluster(misc.face(), 4, True)
-cluster(misc.imread("images/asdfghjk.png"), 4, True)
+#cluster(misc.face(), 0)
+#cluster(misc.face(), 4)
+cluster(misc.imread("images/asdfghjk.jpg"), 4, True)
