@@ -23,7 +23,10 @@ def cluster(im, k=0):
     # Reshapes the image to a RGB * (width*height) matrix.
     dimensions = im.shape
     picReshape = im.reshape((dimensions[0]*dimensions[1], dimensions[2]))
-    numb_of_pxl = dimensions[0]*dimensions[1]
+
+    numb_of_pxl = dimensions[0] * dimensions[1]
+
+    im.reshape((numb_of_pxl, -1))
 
     # The image is Int which Kmeans does not support (only Float and Double), and for
     # this reason it must be changed.
@@ -55,11 +58,12 @@ def cluster(im, k=0):
             #WHITEND 3(N*M) originale datapunkter
             #n_samples, number of centroids
             #label, 3xK matrise
-#            kArr, label = kmeans2(whitened, i)
-#            s_scores[i] = metrics.silhouette_score(whitened, label)
-#            print(i, s_scores[i])
-#    else:
-#        kArr, label = kmeans2(whitened, k)
+
+            kArr, label = kmeans2(im, i)
+            s_scores[i] = metrics.silhouette_score(im, label)
+            print(i, s_scores[i])
+    else:
+        kArr, label = kmeans2(whitened, k)
 
     #finds the best K(closes to 1)
 #    k_val = np.amax(s_scores)
