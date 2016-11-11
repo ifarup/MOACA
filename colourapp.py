@@ -112,6 +112,7 @@ class AppForm(qt.QMainWindow):
         self.get_cluster(self.slider.value())
 
 
+
     def get_cluster(self, k = 3):
         self.im_array, self.k_elements = cluster.cluster(self.image, k)
 
