@@ -105,7 +105,7 @@ class AppForm(qt.QMainWindow):
     def create_legend(self, k):
         kReS = self.k_elements.reshape(k, 1, 3)
         kReS = misc.imresize(kReS, (100, 100), interp='nearest')
-        # Now we got the images, what to do later on?         
+        # Now we got the clustered colors, what to do later on?         
 
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
