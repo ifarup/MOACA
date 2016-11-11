@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PyQt4.QtGui as qt
 import PyQt4.QtCore as qtcore
-from scipy import misc
+from skimage.transform import resize
 
 class AppForm(qt.QMainWindow):
     """
@@ -62,14 +62,21 @@ class AppForm(qt.QMainWindow):
     def create_main_frame(self):
         layout = qt.QVBoxLayout()
 
+        # Bildet
         self.image_label = qt.QLabel()
         self.load_image('images/map.png')
         layout.addWidget(self.image_label)
-
+        
+        # Slider
         self.slider = qt.QSlider(qtcore.Qt.Horizontal)
         self.slider.sliderReleased.connect(self.on_slider_released)
         self.initialize_slider(self.slider)
         layout.addWidget(self.slider)
+        
+        # Legend
+        self.legend_label = qt.QLabel()
+        self.create_legend_colors(self.slider.value())
+        layout.addWidget(self.legend_label)
 
         self.main_frame = qt.QWidget()
         self.main_frame.setLayout(layout)
@@ -104,10 +111,22 @@ class AppForm(qt.QMainWindow):
                                                        filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
 
     # Creates the needed legend, one element for each value av the k-array
-    def create_legend(self, k):
-        kReS = self.k_elements.reshape(k, 1, 3)
-        kReS = misc.imresize(kReS, (100, 100), interp='nearest')
-        # Now we got the clustered colors, what to do later on?         
+    def create_legend_colors(self, k):
+        k_reshape = self.k_elements.reshape(1, k, 3)    # Reshape the list of color elements for
+                                                        # collecting and making them horisontal
+        print(self.k_elements)
+        print(k_reshape)
+        k_resize = resize(k_reshape, (20, 300), order=0) # Resize the reshaped list to make the colors
+                                                         # defined
+        print(k_resize)
+        colorBar = qt.QImage((k_resize * 255).astype('uint8').flatten(),    # Pure copy and paste from 
+                            np.shape(k_resize)[1],                          # ivarh
+                            np.shape(k_resize)[0],
+                            qt.QImage.Format_RGB888)
+        pixmap = qt.QPixmap.fromImage(colorBar)
+        self.legend_label.setPixmap(pixmap)
+        # Now we got the clustered colors and rotated them, 
+        # what to do later on?
 
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
@@ -115,7 +134,6 @@ class AppForm(qt.QMainWindow):
 
     def get_cluster(self, k = 3):
         self.im_array, self.k_elements = cluster.cluster(self.image, k)
-        self.create_legend(k) # Just a thought on how this could work
 
     def initialize_slider(self, slider):
         minSliderValue = 1
