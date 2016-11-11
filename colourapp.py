@@ -127,7 +127,7 @@ class AppForm(qt.QMainWindow):
         print(self.k_elements)
         print(k_reshape)
         k_resize = resize(k_reshape, (20, 300), order=0) # Resize the reshaped list to make the colors
-                                                         # defined
+                                                         # more defined and solid
         print(k_resize)
         colorBar = qt.QImage((k_resize * 255).astype('uint8').flatten(),    # Pure copy and paste from 
                             np.shape(k_resize)[1],                          # ivarh
