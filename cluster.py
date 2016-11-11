@@ -79,4 +79,4 @@ def cluster(im, k=0):
     return centroidMatrix, (kArr)
 
 #cluster(misc.face(), 0)
-cluster(misc.imread("images/asdfghjk.png"), 4)
+cluster(misc.imread("images/asdfghjk.jpg"), 4)
