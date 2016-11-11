@@ -45,22 +45,24 @@ def cluster(im, k=0):
         # Kmeans clustering on whiten data.
         # if k=0 we need to estimate a good K(KK)
     if (k == 0):
-        s_scores = np.array(10)
 
-        # Hardcode bad siluette scores for k = 0,1 so they are not choosen later
-        # s_scores[0] = -1
-        # s_scores[1] = -1
-
+        s_scores = np.ones(10)
+        s_scores[0] = -1
+        s_scores[1] = -1
         for i in range(2, 10):
             #WHITEND 3(N*M) originale datapunkter
             #n_samples, number of centroids
             #label, 3xK matrise
-            kArr, label = kmeans2(pictureMatrix, i)
-            print(i, metrics.silhouette_score(pictureMatrix, label))
-            #print(s_scores[i])
+            kArr, label = kmeans2(whitened, i)
+            s_scores[i] = metrics.silhouette_score(whitened, label)
+            print(i, s_scores[i])
     else:
         kArr, label = kmeans2(whitened, k)
 
+    #finds the best K(closes to 1)
+    k_val = np.amax(s_scores)
+    k = np.argmax(s_scores)
+    print(k, k_val)
     # Reshapes the label list back to the size of the origial image matrix
     centroidMatrix = label.reshape((dimensions[0], dimensions[1]))
 
