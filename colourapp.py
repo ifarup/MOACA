@@ -23,6 +23,9 @@ class AppForm(qt.QMainWindow):
 
     def __init__(self, parent=None):
         qt.QMainWindow.__init__(self, parent)
+        
+        # Defining stuff here to counter some trouble later on
+        self.legend_label = qt.QLabel()
 
         self.minKValue = 2
         self.maxKValue = 30
@@ -84,7 +87,6 @@ class AppForm(qt.QMainWindow):
         layout.addWidget(self.spin_box, 2, 1)
         
         # Legend
-        self.legend_label = qt.QLabel()
         self.create_legend_colors(self.slider.value())
         layout.addWidget(self.legend_label)
 
@@ -148,6 +150,7 @@ class AppForm(qt.QMainWindow):
         self.get_cluster(self.slider.value())
         self.create_legend_colors(self.slider.value())
 
+
     def on_spin_box_changed(self):
         self.slider.setValue(self.spin_box.value())
         self.get_cluster(self.spin_box.value())
@@ -155,6 +158,7 @@ class AppForm(qt.QMainWindow):
 
     def get_cluster(self, k = 3):
         self.im_array, self.k_elements = cluster.cluster(self.image, k)
+
 
     def initialize_slider(self, slider):
         k_value = self.k_elements.shape[0]
