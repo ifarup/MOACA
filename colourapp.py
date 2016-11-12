@@ -109,7 +109,9 @@ class AppForm(qt.QMainWindow):
     def load_image(self, filename):
         self.image = plt.imread(filename)[..., :3] # remove possible alpha channel
         if self.image.dtype == 'uint8':
-            self.image = self.image.astype('float') / 255
+            self.image = self.image.astype(float) / 255
+        else:
+            self.image = self.image.astype(float) # in case it is 'float32', not 'float42'
         self.get_cluster()
         self.display_image()
 
@@ -117,8 +119,12 @@ class AppForm(qt.QMainWindow):
         self.close()
 
     def on_load_image(self):
-        self.load_image(qt.QFileDialog.getOpenFileName(self, 'Open image',
-                                                       filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
+        filename = qt.QFileDialog.getOpenFileName(self, 'Open image',
+                                                  filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)')
+        if filename != '':
+            self.load_image(filename)
+            self.get_cluster(self.slider.value())
+            self.create_legend_colors(self.slider.value())
 
     # Creates the needed legend, one element for each value av the k-array
     def create_legend_colors(self, k):
