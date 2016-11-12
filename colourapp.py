@@ -124,28 +124,34 @@ class AppForm(qt.QMainWindow):
     def create_legend_colors(self, k):
         k_reshape = self.k_elements.reshape(1, k, 3)    # Reshape the list of color elements for
                                                         # collecting and making them horisontal
-        print(self.k_elements)
-        print(k_reshape)
-        k_resize = resize(k_reshape, (20, 300), order=0) # Resize the reshaped list to make the colors
-                                                         # more defined and solid
-        print(k_resize)
+        k_resize = resize(k_reshape, (20, self.im_array.shape[1]), order=0) # Resize the reshaped list to make the colors
+                                                                            # more defined and solid
         colorBar = qt.QImage((k_resize * 255).astype('uint8').flatten(),    # Pure copy and paste from 
                             np.shape(k_resize)[1],                          # ivarh
                             np.shape(k_resize)[0],
                             qt.QImage.Format_RGB888)
         pixmap = qt.QPixmap.fromImage(colorBar)
+        self.legend_label.clear()                       # First clearing label for excisting stuff
+                                                        # Now suddenly getting errors about AppForm
+                                                        # not having the attribute 'legend_label'?
         self.legend_label.setPixmap(pixmap)
         # Now we got the clustered colors and rotated them, 
         # what to do later on?
+        
+    def click_color_bar(self, event):
+        # What is going to happen when a user clicks the label?
+        print("Something is going to happen here")
 
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
         self.spin_box.setValue(self.slider.value())
         self.get_cluster(self.slider.value())
+        self.create_legend_colors(self.slider.value())
 
     def on_spin_box_changed(self):
         self.slider.setValue(self.spin_box.value())
         self.get_cluster(self.spin_box.value())
+        self.create_legend_colors(self.slider.value())
 
     def get_cluster(self, k = 3):
         self.im_array, self.k_elements = cluster.cluster(self.image, k)
@@ -158,7 +164,6 @@ class AppForm(qt.QMainWindow):
         slider.setTickInterval(1)
         slider.setValue(k_value)
         slider.setPageStep(1)
-
 
     def initialize_spin_box(self):
         self.spin_box.setMinimum(self.minKValue)
