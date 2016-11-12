@@ -26,7 +26,7 @@ class AppForm(qt.QMainWindow):
         
         # Defining stuff here to counter some trouble later on
         self.legend_label = qt.QLabel()
-
+        self.legend_label.mouseReleaseEvent = self.click_color_bar
         self.minKValue = 2
         self.maxKValue = 30
 
@@ -144,10 +144,15 @@ class AppForm(qt.QMainWindow):
         # Now we got the clustered colors and rotated them, 
         # what to do later on?
         
+    # Event for making magic when user clicks a color in the color bar
     def click_color_bar(self, event):
         # What is going to happen when a user clicks the label?
-        print("Something is going to happen here")
-
+        print("Legend clicked, now to make something happen.")
+        # Need to find out how we can get the color coordinates from the qlabel where the
+        # mouse clicked
+        coordinate_x = self.legend_label.x()
+        print(coordinate_x)        
+        
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
         self.spin_box.setValue(self.slider.value())
