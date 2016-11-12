@@ -111,7 +111,9 @@ class AppForm(qt.QMainWindow):
     def load_image(self, filename):
         self.image = plt.imread(filename)[..., :3] # remove possible alpha channel
         if self.image.dtype == 'uint8':
-            self.image = self.image.astype('float') / 255
+            self.image = self.image.astype(float) / 255
+        else:
+            self.image = self.image.astype(float) # in case it is 'float32', not 'float42'
         self.get_cluster()
         self.display_image()
 
@@ -119,10 +121,14 @@ class AppForm(qt.QMainWindow):
         self.close()
 
     def on_load_image(self):
-        self.load_image(qt.QFileDialog.getOpenFileName(self, 'Open image',
-                                                       filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)'))
+        filename = qt.QFileDialog.getOpenFileName(self, 'Open image',
+                                                  filter='All files (*.*);;JPEG (*.jpg *.jpeg);;TIFF (*.tif);;PNG (*.png)')
+        if filename != '':
+            self.load_image(filename)
+            self.get_cluster(self.slider.value())
+            self.create_legend_colors(self.slider.value())
 
-    # Creates the needed legend, one element for each value av the k-array
+    # Creates the needed legend, one color for each value av the k-array
     def create_legend_colors(self, k):
         k_reshape = self.k_elements.reshape(1, k, 3)    # Reshape the list of color elements for
                                                         # collecting and making them horisontal
@@ -134,9 +140,7 @@ class AppForm(qt.QMainWindow):
                             qt.QImage.Format_RGB888)
         pixmap = qt.QPixmap.fromImage(colorBar)
         self.legend_label.clear()                       # First clearing label for excisting stuff
-                                                        # Now suddenly getting errors about AppForm
-                                                        # not having the attribute 'legend_label'?
-        self.legend_label.setPixmap(pixmap)
+        self.legend_label.setPixmap(pixmap)             # Adding the legend to the label
         # Now we got the clustered colors and rotated them, 
         # what to do later on?
         
