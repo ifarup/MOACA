@@ -34,6 +34,7 @@ class AppForm(qt.QMainWindow):
         # Constants
         self.minKValue = 2
         self.maxKValue = 30
+        
 
         self.setWindowTitle('ColourApp')
         self.create_menu()
@@ -139,11 +140,11 @@ class AppForm(qt.QMainWindow):
                                                         # collecting and making them horisontal
         k_resize = resize(k_reshape, (20, self.im_array.shape[1]), order=0) # Resize the reshaped list to make the colors
                                                                             # more defined and solid
-        colorBar = qt.QImage((k_resize * 255).astype('uint8').flatten(),    # Pure copy and paste from 
-                            np.shape(k_resize)[1],                          # ivarh
+        self.colorBar = qt.QImage((k_resize * 255).astype('uint8').flatten(),    # Pure copy and paste from 
+                            np.shape(k_resize)[1],                               # ivarh
                             np.shape(k_resize)[0],
                             qt.QImage.Format_RGB888)
-        pixmap = qt.QGraphicsPixmapItem(qt.QPixmap.fromImage(colorBar), None, self.local_scene)
+        pixmap = qt.QGraphicsPixmapItem(qt.QPixmap.fromImage(self.colorBar), None, self.local_scene)
         pixmap.mousePressEvent = self.click_color_bar     # Reacting to a click, but not to release?
                                                           # Not a big problem, but feels a bit strange
                                                           # when trying it out
@@ -154,6 +155,12 @@ class AppForm(qt.QMainWindow):
     def click_color_bar(self, event):
         # What is going to happen when a user clicks the label?
         print("Legend clicked, now to make something happen.")
+        pos = qtcore.QPoint(event.pos().x(), event.pos().y())   # Finds the position of cursor
+        color = qt.QColor.fromRgb(self.colorBar.pixel(pos))     # Finds the color at cursor position
+        
+        print(color.red() / 255, color.green() / 255, color.blue() / 255)
+        print(self.k_elements)
+#        print(np.where(self.k_elements, [color.red(), color.green(), color.blue()]))
         # Need to find out how we can get the color coordinates from the qlabel where the
         # mouse clicked
         
