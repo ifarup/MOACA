@@ -25,8 +25,13 @@ class AppForm(qt.QMainWindow):
         qt.QMainWindow.__init__(self, parent)
         
         # Defining stuff here to counter some trouble later on
-        self.legend_label = qt.QLabel()
-        self.legend_label.mouseReleaseEvent = self.click_color_bar
+        self.legend_view = qt.QGraphicsView()
+        self.legend_view.setFixedHeight(20)    # Matching height with pixmap
+        self.legend_view.setFrameStyle(0)      # Don't want any scrollbar
+        self.local_scene = qt.QGraphicsScene()
+        self.legend_view.setScene(self.local_scene)
+        
+        # Constants
         self.minKValue = 2
         self.maxKValue = 30
 
@@ -88,7 +93,7 @@ class AppForm(qt.QMainWindow):
         
         # Legend
         self.create_legend_colors(self.slider.value())
-        layout.addWidget(self.legend_label)
+        layout.addWidget(self.legend_view)
 
         self.main_frame = qt.QWidget()
         self.main_frame.setLayout(layout)
@@ -138,9 +143,9 @@ class AppForm(qt.QMainWindow):
                             np.shape(k_resize)[1],                          # ivarh
                             np.shape(k_resize)[0],
                             qt.QImage.Format_RGB888)
-        pixmap = qt.QPixmap.fromImage(colorBar)
-        self.legend_label.clear()                       # First clearing label for excisting stuff
-        self.legend_label.setPixmap(pixmap)             # Adding the legend to the label
+        self.local_scene.clear()
+        pixmap = qt.QGraphicsPixmapItem(qt.QPixmap.fromImage(colorBar), None, self.local_scene)
+        pixmap.mouseReleaseEvent = self.click_color_bar
         # Now we got the clustered colors and rotated them, 
         # what to do later on?
         
@@ -150,8 +155,6 @@ class AppForm(qt.QMainWindow):
         print("Legend clicked, now to make something happen.")
         # Need to find out how we can get the color coordinates from the qlabel where the
         # mouse clicked
-        coordinate_x = self.legend_label.x()
-        print(coordinate_x)        
         
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
