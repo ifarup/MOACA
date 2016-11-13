@@ -143,9 +143,10 @@ class AppForm(qt.QMainWindow):
                             np.shape(k_resize)[1],                          # ivarh
                             np.shape(k_resize)[0],
                             qt.QImage.Format_RGB888)
-        self.local_scene.clear()
         pixmap = qt.QGraphicsPixmapItem(qt.QPixmap.fromImage(colorBar), None, self.local_scene)
-        pixmap.mousePressEvent = self.click_color_bar     # Not reacting, what to do with this turd?
+        pixmap.mousePressEvent = self.click_color_bar     # Reacting to a click, but not to release?
+                                                          # Not a big problem, but feels a bit strange
+                                                          # when trying it out
         # Now we got the clustered colors and rotated them, 
         # what to do later on?
         
