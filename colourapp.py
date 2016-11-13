@@ -145,7 +145,7 @@ class AppForm(qt.QMainWindow):
                             qt.QImage.Format_RGB888)
         self.local_scene.clear()
         pixmap = qt.QGraphicsPixmapItem(qt.QPixmap.fromImage(colorBar), None, self.local_scene)
-        pixmap.mouseReleaseEvent = self.click_color_bar
+        pixmap.mousePressEvent = self.click_color_bar     # Not reacting, what to do with this turd?
         # Now we got the clustered colors and rotated them, 
         # what to do later on?
         
