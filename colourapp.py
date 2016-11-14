@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import PyQt4.QtGui as qt
 import PyQt4.QtCore as qtcore
 from skimage.transform import resize
+import math
 
 class AppForm(qt.QMainWindow):
     """
@@ -152,14 +153,35 @@ class AppForm(qt.QMainWindow):
         # what to do later on?
         
     # Event for making magic when user clicks a color in the color bar
+    # Inspiration from this page: http://stackoverflow.com/questions/3522701/pyqt-get-pixel-position-and-value-when-mouse-click-on-the-image
     def click_color_bar(self, event):
         # What is going to happen when a user clicks the label?
         print("Legend clicked, now to make something happen.")
         pos = qtcore.QPoint(event.pos().x(), event.pos().y())   # Finds the position of cursor
-        color = qt.QColor.fromRgb(self.colorBar.pixel(pos))     # Finds the color at cursor position
         
-        print(color.red() / 255, color.green() / 255, color.blue() / 255)
-        print(self.k_elements)
+        # Finding the index value
+        index = math.floor(pos.x() / self.im_array.shape[1] * self.slider.value())
+
+        
+#        print("K-verdiene: {}".format(self.k_elements))
+#        print("Lengden på im_array: {}".format(self.im_array.shape[1]))
+#        print("Verdien på slideren: {}".format(self.slider.value()))
+#        print("Posisjon x: {}".format(pos.x()))
+#        print("Tilsvarer index nr. {}".format(index))
+#        print("Hvor fargen er: {}".format(self.k_elements[index]))
+            
+            
+            
+        #        color = qt.QColor.fromRgb(self.colorBar.pixel(pos))     # Finds the color at cursor position
+        
+            # Maybe not needed if we're just going to look at position
+#        if color.isValid():
+#            print("Valgt farge er gyldig")
+        
+            # Something is not right here, colors are a bit off
+#        print(color.red() / 255, color.green() / 255, color.blue() / 255)
+#        print(self.k_elements)
+        
 #        print(np.where(self.k_elements, [color.red(), color.green(), color.blue()]))
         # Need to find out how we can get the color coordinates from the qlabel where the
         # mouse clicked
