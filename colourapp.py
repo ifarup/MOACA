@@ -9,6 +9,7 @@ import PyQt4.QtGui as qt
 import PyQt4.QtCore as qtcore
 from skimage.transform import resize
 import math
+from HighlightImage import HighlightImage
 
 class AppForm(qt.QMainWindow):
     """
@@ -107,10 +108,10 @@ class AppForm(qt.QMainWindow):
 
 
 
-    def display_image(self):
-        image = qt.QImage((self.image * 255).astype('uint8').flatten(),
-                          np.shape(self.image)[1],
-                          np.shape(self.image)[0],
+    def display_image(self, im):
+        image = qt.QImage((im * 255).astype('uint8').flatten(),
+                          np.shape(im)[1],
+                          np.shape(im)[0],
                           qt.QImage.Format_RGB888)
         pixmap = qt.QPixmap.fromImage(image)
         self.image_label.setPixmap(pixmap)
@@ -122,7 +123,8 @@ class AppForm(qt.QMainWindow):
         else:
             self.image = self.image.astype(float) # in case it is 'float32', not 'float42'
         self.get_cluster()
-        self.display_image()
+        self.display_image(self.image)
+        self.hl = HighlightImage(self.image)
 
     def on_close(self):
         self.close()
@@ -162,7 +164,11 @@ class AppForm(qt.QMainWindow):
         # Finding the index value
         index = math.floor(pos.x() / self.im_array.shape[1] * self.slider.value())
 
-        
+        hli = self.hl.highlight(index, self.im_array)
+        self.display_image(hli)
+
+
+
 #        print("K-verdiene: {}".format(self.k_elements))
 #        print("Lengden på im_array: {}".format(self.im_array.shape[1]))
 #        print("Verdien på slideren: {}".format(self.slider.value()))
