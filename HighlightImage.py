@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import time     # Just for testing execution time
-
+import copy
 
 class HighlightImage:
 
@@ -13,6 +13,8 @@ class HighlightImage:
             # other area darker.
         if oi.dtype == 'float32':
             self.pixelChangeValue = 0.8
+        elif oi.dtype == 'float64':
+            self.pixelChangeValue = 0.7
         elif oi.dtype == 'uint8':
             self.pixelChangeValue = 100
         elif oi.dtype == 'uint16':
@@ -27,7 +29,8 @@ class HighlightImage:
     The edited original image
     """
     def highlight(self, K, kvi):
-        
+        self.editedimage = copy.copy(self.originalImage)
+
         starttime = time.time()
             # Checks that kvi is valid
         if len(kvi.shape) > 2:
@@ -46,30 +49,34 @@ class HighlightImage:
         
         print("--- %s seconds ---" % (time.time() - starttime))
         
-        return self.originalImage
+        return self.editedimage
 
     def highlight_pixel(self, j, i):
         
         for r in range(3):
-            pixelValue = self.originalImage[j][i][r]+self.pixelChangeValue
+            pixelValue = self.editedimage[j][i][r]+self.pixelChangeValue
             
-            if self.originalImage.dtype == 'float32':
+            if self.editedimage.dtype == 'float32':
                 if pixelValue > 1:
                     pixelValue = 1
-            elif self.originalImage.dtype == 'uint16':
+            elif self.editedimage.dtype == 'float64':
+                if pixelValue > 1:
+                    pixelValue = 1
+            elif self.editedimage.dtype == 'uint16':
                 if pixelValue > 65535:
                     pixelValue = 65535
             else:
                 if pixelValue > 255:
                     pixelValue = 255
             
-            self.originalImage[j][i][r] = pixelValue
+            self.editedimage[j][i][r] = pixelValue
 
     def darken_pixel(self, j, i):
         
         for r in range(3):
-            pixelValue = self.originalImage[j][i][r]-self.pixelChangeValue
+            pixelValue = self.editedimage[j][i][r]-self.pixelChangeValue
             if pixelValue < 0:
                 pixelValue = 0
-            self.originalImage[j][i][r] = pixelValue
+
+            self.editedimage[j][i][r] = pixelValue
         
