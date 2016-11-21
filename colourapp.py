@@ -158,7 +158,7 @@ class AppForm(qt.QMainWindow):
     # Inspiration from this page: http://stackoverflow.com/questions/3522701/pyqt-get-pixel-position-and-value-when-mouse-click-on-the-image
     def click_color_bar(self, event):
         # What is going to happen when a user clicks the label?
-        print("Legend clicked, now to make something happen.")
+
         pos = qtcore.QPoint(event.pos().x(), event.pos().y())   # Finds the position of cursor
         
         # Finding the index value
