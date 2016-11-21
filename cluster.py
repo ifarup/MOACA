@@ -8,18 +8,25 @@ from sklearn import cluster as clstr
 from sklearn.cluster import AffinityPropagation
 from sklearn import metrics
 
+from skimage.transform import resize
+
 import numpy as np
 
 # Takes a ndarray and a k value as paramter.
 
 def cluster(im, k, intervall = False):
 
+    # Resizes the image to a more manageble size for clustering.
+    # Timeconsumption for clustering drastically reduses.
+    imDim = np.array(im.shape[0:2])
+    resizedImage = resize(im, (imDim[:2] / imDim.max() * 100).astype(int))
+
     # To show the picture sent to the function to verify that there actually is an image.
     #import matplotlib.pyplot as plt    #plt.imshow(im)    #plt.show()
 
-    # Reshapes the image to a (width*height)*RGB  matrix.
-    dimensions = im.shape
-    picReshape = im.reshape((dimensions[0]*dimensions[1], dimensions[2]))
+    # Reshapes the resized image to a (width*height)*RGB  matrix.
+    dimensions = resizedImage.shape
+    picReshape = resizedImage.reshape((dimensions[0] * dimensions[1], dimensions[2]))
 
     numb_of_pxl = dimensions[0] * dimensions[1]
 
@@ -41,6 +48,7 @@ def cluster(im, k, intervall = False):
         stdDev[zeroStdMask] = 1.0
 
     # if k=0 we need to estimate a good value for K.
+    #    finds the best K(closes to 1)
 
     if (intervall):
         s_scores = np.ones(k)
@@ -58,28 +66,38 @@ def cluster(im, k, intervall = False):
         # Print scores for testing purposes.
         k_val = np.amax(s_scores)
         k = np.argmax(s_scores)
-        print(19 * '*')
-        print('|', k, k_val, '|')
-        print(19 * '*')
+
+        # Used for testing?
+        # print(19 * '*')
+        # print('|', k, k_val, '|')
+        # print(19 * '*')
 
     else:
         kmeansData = clstr.KMeans(k).fit(whitened)
 
-    #    finds the best K(closes to 1)
-
-
-    # Reshapes the label list back to the size of the origial image matrix
-
     # Clusters the images whiten data and recreates the actual centroid values.
     kArr = (kmeansData.cluster_centers_ * stdDev)
 
-    # Reshapes the label list back to the size of the origial image matrix,
-    centroidMatrix = np.array(kmeansData.labels_).reshape((dimensions[0], dimensions[1]))
+    # Reshapes the original picture to a (width*height)*RGB  matrix.
+    # This is necessary for kmeans to predict the corresponding color for each pixel
+    # in regards to the resized image is has been trained on.
+    orgPicDim = im.shape
+    orgPicReshape = im.reshape((orgPicDim[0] * orgPicDim[1], orgPicDim[2]))
 
+    # Uses the learned data from the resized image to predict cluster for each pixel
+    # on the original picture.
+    tmp = np.array((kmeansData.labels_).reshape((dimensions[0], dimensions[1])))
+    #print(tmp)
+    #print("space")
+
+    test = whiten(orgPicReshape)
+    labels = kmeansData.predict(test)
+
+    # Reshapes the label list back to the size of the origial image matrix,
+    centroidMatrix = np.array(labels).reshape((orgPicDim[0], orgPicDim[1]))
+    #print(centroidMatrix)
     # Returns a centroidmatrix representing the image with clustervalues instead of actual colors.
     return centroidMatrix, kArr
 
-#cluster(misc.face(), 4, True)
-#cluster(misc.face(), 0)
-#cluster(misc.face(), 4)
-cluster(misc.imread("images/asdfghjk.jpg"), 4, True)
+#cluster(misc.face(), 4, False)
+#cluster(misc.imread("images/asdfghjk.jpg"), 4)
