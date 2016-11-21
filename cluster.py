@@ -86,11 +86,16 @@ def cluster(im, k, intervall = False):
 
     # Uses the learned data from the resized image to predict cluster for each pixel
     # on the original picture.
-    labels = kmeansData.predict(orgPicReshape)
+    tmp = np.array((kmeansData.labels_).reshape((dimensions[0], dimensions[1])))
+    #print(tmp)
+    #print("space")
+
+    test = whiten(orgPicReshape)
+    labels = kmeansData.predict(test)
 
     # Reshapes the label list back to the size of the origial image matrix,
     centroidMatrix = np.array(labels).reshape((orgPicDim[0], orgPicDim[1]))
-
+    #print(centroidMatrix)
     # Returns a centroidmatrix representing the image with clustervalues instead of actual colors.
     return centroidMatrix, kArr
 
