@@ -29,6 +29,7 @@ class AppForm(qt.QMainWindow):
         # Defining stuff here to counter some trouble later on
         self.legend_view = qt.QGraphicsView()
         self.legend_view.setFixedHeight(20)    # Matching height with pixmap
+        self.legend_view.setFrameStyle(0)               # Don't want any scrollbar
         self.local_scene = qt.QGraphicsScene()
         self.legend_view.setScene(self.local_scene)
         
@@ -138,7 +139,6 @@ class AppForm(qt.QMainWindow):
 
     # Creates the needed legend, one color for each value av the k-array
     def create_legend_colors(self, k):
-        self.legend_view.setFrameStyle(0)               # Don't want any scrollbar
         k_reshape = self.k_elements.reshape(1, k, 3)    # Reshape the list of color elements for
                                                         # collecting and making them horisontal
         k_resize = resize(k_reshape, (20, self.im_array.shape[1]), order=0) # Resize the reshaped list to make the colors
@@ -156,7 +156,6 @@ class AppForm(qt.QMainWindow):
     # Event for making magic when user clicks a color in the color bar
     # Inspiration from this page: http://stackoverflow.com/questions/3522701/pyqt-get-pixel-position-and-value-when-mouse-click-on-the-image
     def click_color_bar(self, event):
-        # What is going to happen when a user clicks the label?
 
         pos = qtcore.QPoint(event.pos().x(), event.pos().y())   # Finds the position of cursor
         
@@ -165,31 +164,6 @@ class AppForm(qt.QMainWindow):
 
         hli = self.hl.highlight(index, self.im_array)
         self.display_image(hli)
-
-
-
-#        print("K-verdiene: {}".format(self.k_elements))
-#        print("Lengden på im_array: {}".format(self.im_array.shape[1]))
-#        print("Verdien på slideren: {}".format(self.slider.value()))
-#        print("Posisjon x: {}".format(pos.x()))
-#        print("Tilsvarer index nr. {}".format(index))
-#        print("Hvor fargen er: {}".format(self.k_elements[index]))
-            
-            
-            
-        #        color = qt.QColor.fromRgb(self.colorBar.pixel(pos))     # Finds the color at cursor position
-        
-            # Maybe not needed if we're just going to look at position
-#        if color.isValid():
-#            print("Valgt farge er gyldig")
-        
-            # Something is not right here, colors are a bit off
-#        print(color.red() / 255, color.green() / 255, color.blue() / 255)
-#        print(self.k_elements)
-        
-#        print(np.where(self.k_elements, [color.red(), color.green(), color.blue()]))
-        # Need to find out how we can get the color coordinates from the qlabel where the
-        # mouse clicked
         
     # Calls the clustering function with loaded image and value of slider:
     def on_slider_released(self):
