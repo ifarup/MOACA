@@ -38,7 +38,7 @@ class AppForm(qt.QMainWindow):
         self.maxKValue = 30
         
 
-        self.setWindowTitle('ColourApp')
+        self.setWindowTitle('MOACA')
         self.create_menu()
         self.create_main_frame()
 
